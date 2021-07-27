@@ -25,6 +25,20 @@ namespace sha256 {
                                      0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
                                      0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
             
+            //pre-processing
+            string input = args[1];
+            byte[] inputBytes = System.Text.ASCIIEncoding.UTF8.GetBytes(input);
+
+            //make a byte array where everything fits
+            // length + ( 64 + 1 (appended bit) + 8 (the ulong length at the end) - (length + 9 (added things)) % 64)
+            byte[] preProcessedInput = new byte[inputBytes.Length + (73 - ((inputBytes.Length + 9) % 64))];
+            //fill the array
+            Array.Copy(inputBytes, 0, preProcessedInput, 0, inputBytes.Length);
+            preProcessedInput[inputBytes.Length] = 128; //add a 1 to the far left of this byte
+            for(int i = inputBytes.Length + 1; i < preProcessedInput.Length - 8; i++) preProcessedInput[i] = 0; //set the filler bytes to 0
+            Byte[] lengthBytes = BitConverter.GetBytes((ulong)(inputBytes.Length*8));
+            if(BitConverter.IsLittleEndian) Array.Reverse(lengthBytes);
+            Array.Copy(lengthBytes, 0, preProcessedInput, preProcessedInput.Length - 8, 8);
         }
     }
 }
