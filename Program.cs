@@ -46,6 +46,25 @@ namespace sha256 {
                 chunks[i>>6] = new byte[64];
                 Array.Copy(preProcessedInput, i, chunks[i >> 6], 0, 64);
             }
+
+            //process the input in 512 bit chunks
+            for(int i = 0; i < chunks.Length; i++){
+                int[] words = new int[64];
+                //copy chunk into the first 16 words
+                for (int j = 0; j < 64; j += 4){
+                    words[j >> 2] = ((int)chunks[i][j] << 24) | ((int)chunks[i][j+1] << 16) | ((int)chunks[i][j+2] << 8) | (int)chunks[i][j+3];
+                }
+                //fill in the remaining words
+                for(int j = 16; j < 64; j++){
+                    int s0 = ((words[j-15] >> 7) | (words[j-15] << 25)) ^ ((words[j-15] >> 18) | (words[j-15] << 14)) ^ (words[j-15] >> 3);
+                    int s1 = ((words[j-2] >> 17) | (words[j-2]  << 15)) ^ ((words[j-15] >> 19) | (words[j-2]  << 13)) ^ (words[j-2] >> 10);
+                    words[j] = words[j-16] + s0 + words[j-7] + s1;
+                }
+            }
+        }
+
+        int rightRotate(int val, int amount){
+            return (val >> amount) | (val << 32-amount);
         }
     }
 }
