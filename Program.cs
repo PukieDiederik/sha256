@@ -39,6 +39,13 @@ namespace sha256 {
             Byte[] lengthBytes = BitConverter.GetBytes((ulong)(inputBytes.Length*8));
             if(BitConverter.IsLittleEndian) Array.Reverse(lengthBytes);
             Array.Copy(lengthBytes, 0, preProcessedInput, preProcessedInput.Length - 8, 8);
+
+            //chunkify preprocessed input in 512 bit chunks
+            byte[][] chunks = new byte[preProcessedInput.Length >> 6][];
+            for(uint i = 0; i < preProcessedInput.Length; i += 64){
+                chunks[i>>6] = new byte[64];
+                Array.Copy(preProcessedInput, i, chunks[i >> 6], 0, 64);
+            }
         }
     }
 }
