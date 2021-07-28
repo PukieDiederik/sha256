@@ -100,7 +100,8 @@ namespace sha256 {
                 hash6 += g;
                 hash7 += h;
             }
-            Console.WriteLine((hash0.ToString("X") + hash1.ToString("X") + hash2.ToString("X") + hash3.ToString("X") + hash4.ToString("X") + hash5.ToString("X")+ hash6.ToString("X") + hash7.ToString("X")).ToLower());
+            Console.WriteLine((hash0.ToString("X").PadLeft(8, '0') + hash1.ToString("X").PadLeft(8, '0') + hash2.ToString("X").PadLeft(8, '0') + hash3.ToString("X").PadLeft(8, '0') + 
+                               hash4.ToString("X").PadLeft(8, '0') + hash5.ToString("X").PadLeft(8, '0') + hash6.ToString("X").PadLeft(8, '0') + hash7.ToString("X").PadLeft(8, '0')).ToLower());
         }
 
         int rightRotate(int val, int amount){
