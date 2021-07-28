@@ -49,18 +49,58 @@ namespace sha256 {
 
             //process the input in 512 bit chunks
             for(int i = 0; i < chunks.Length; i++){
-                int[] words = new int[64];
+                uint[] words = new uint[64];
                 //copy chunk into the first 16 words
                 for (int j = 0; j < 64; j += 4){
-                    words[j >> 2] = ((int)chunks[i][j] << 24) | ((int)chunks[i][j+1] << 16) | ((int)chunks[i][j+2] << 8) | (int)chunks[i][j+3];
+                    words[j >> 2] = ((uint)chunks[i][j] << 24) | ((uint)chunks[i][j+1] << 16) | ((uint)chunks[i][j+2] << 8) | (uint)chunks[i][j+3];
                 }
                 //fill in the remaining words
                 for(int j = 16; j < 64; j++){
-                    int s0 = ((words[j-15] >> 7) | (words[j-15] << 25)) ^ ((words[j-15] >> 18) | (words[j-15] << 14)) ^ (words[j-15] >> 3);
-                    int s1 = ((words[j-2] >> 17) | (words[j-2]  << 15)) ^ ((words[j-15] >> 19) | (words[j-2]  << 13)) ^ (words[j-2] >> 10);
+                    uint s0 = ((words[j-15] >> 7) | (words[j-15] << 25)) ^ ((words[j-15] >> 18) | (words[j-15] << 14)) ^ (words[j-15] >> 3);
+                    uint s1 = ((words[j-2] >> 17) | (words[j-2]  << 15)) ^ ((words[j-2] >> 19) | (words[j-2]  << 13)) ^ (words[j-2] >> 10);
                     words[j] = words[j-16] + s0 + words[j-7] + s1;
                 }
+
+                uint a = hash0;
+                uint b = hash1;
+                uint c = hash2;
+                uint d = hash3;
+                uint e = hash4;
+                uint f = hash5;
+                uint g = hash6;
+                uint h = hash7;
+
+                //compression function
+                for( int j = 0; j < 64; j++){
+                    uint s1 = ((e >> 6) | (e << 26)) ^ ((e >> 11) | (e << 21)) ^ ((e >> 25) | (e << 7));
+                    uint ch = (e & f) ^ ((~e) & g);
+                    uint temp1 = h + s1 + ch + roundConstants[j] + words[j];
+                    uint s0 = ((a >> 2) | (a << 30)) ^ ((a >> 13) | (a << 19)) ^ ((a >> 22) | (a << 10));
+                    uint maj = (a & b) ^ (a & c) ^ (b & c);
+                    uint temp2 = s0 + maj;
+                    
+
+                    h = g;
+                    g = f;
+                    f = e;
+                    e = d + temp1;
+                    d = c;
+                    c = b;
+                    b = a;
+                    a = temp1 + temp2;
+
+
+                }
+                hash0 += a;
+                hash1 += b;
+                hash2 += c;
+                hash3 += d;
+                hash4 += e;
+                hash5 += f;
+                hash6 += g;
+                hash7 += h;
             }
+            Console.WriteLine((hash0.ToString("X") + hash1.ToString("X") + hash2.ToString("X") + hash3.ToString("X") + hash4.ToString("X") + hash5.ToString("X")+ hash6.ToString("X") + hash7.ToString("X")).ToLower());
         }
 
         int rightRotate(int val, int amount){
