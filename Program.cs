@@ -79,7 +79,6 @@ namespace sha256 {
                     uint maj = (a & b) ^ (a & c) ^ (b & c);
                     uint temp2 = s0 + maj;
                     
-
                     h = g;
                     g = f;
                     f = e;
@@ -88,9 +87,8 @@ namespace sha256 {
                     c = b;
                     b = a;
                     a = temp1 + temp2;
-
-
                 }
+
                 hash0 += a;
                 hash1 += b;
                 hash2 += c;
@@ -100,12 +98,17 @@ namespace sha256 {
                 hash6 += g;
                 hash7 += h;
             }
-            Console.WriteLine((hash0.ToString("X").PadLeft(8, '0') + hash1.ToString("X").PadLeft(8, '0') + hash2.ToString("X").PadLeft(8, '0') + hash3.ToString("X").PadLeft(8, '0') + 
-                               hash4.ToString("X").PadLeft(8, '0') + hash5.ToString("X").PadLeft(8, '0') + hash6.ToString("X").PadLeft(8, '0') + hash7.ToString("X").PadLeft(8, '0')).ToLower());
-        }
+            System.Text.StringBuilder sb = new System.Text.StringBuilder(64);
+            sb.Append(hash0.ToString("X").PadLeft(8, '0'));
+            sb.Append(hash1.ToString("X").PadLeft(8, '0'));
+            sb.Append(hash2.ToString("X").PadLeft(8, '0'));
+            sb.Append(hash3.ToString("X").PadLeft(8, '0'));
+            sb.Append(hash4.ToString("X").PadLeft(8, '0'));
+            sb.Append(hash5.ToString("X").PadLeft(8, '0'));
+            sb.Append(hash6.ToString("X").PadLeft(8, '0'));
+            sb.Append(hash7.ToString("X").PadLeft(8, '0'));
 
-        int rightRotate(int val, int amount){
-            return (val >> amount) | (val << 32-amount);
+            Console.WriteLine(sb.ToString().ToLower());
         }
     }
 }
